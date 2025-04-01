@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGRINOVA</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            /* Light Mode Colors */
+            --primary-color-light: #2ecc71;
+            --secondary-color-light: #27ae60;
+            --background-color-light: #f4f6f7;
+            --card-color-light: #ffffff;
+            --text-color-light: #2c3e50;
+            --accent-color-light: #3498db;
+
+            /* Dark Mode Colors */
+            --primary-color-dark: #27ae60;
+            --secondary-color-dark: #2ecc71;
+            --background-color-dark: #121212;
+            --card-color-dark: #1e1e1e;
+            --text-color-dark: #e0e0e0;
+            --accent-color-dark: #4ecdc4;
+
+            /* Default to Light Mode */
+            --primary-color: var(--primary-color-light);
+            --secondary-color: var(--secondary-color-light);
+            --background-color: var(--background-color-light);
+            --card-color: var(--card-color-light);
+            --text-color: var(--text-color-light);
+            --accent-color: var(--accent-color-light);
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            --primary-color: var(--primary-color-dark);
+            --secondary-color: var(--secondary-color-dark);
+            --background-color: var(--background-color-dark);
+            --card-color: var(--card-color-dark);
+            --text-color: var(--text-color-dark);
+            --accent-color: var(--accent-color-dark);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--background-color);
+            line-height: 1.6;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-color);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            animation: fadeIn 0.5s ease-out;
+            position: relative;
+        }
+
+        /* Dark mode toggle styles */
+        .dark-mode-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header h2 {
+            color: var(--primary-color);
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h2 i {
+            color: var(--accent-color);
+        }
+
+        /* Fetch Sensor Button Styles */
+        #fetchSensorBtn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            cursor: pointer;
+            font-size: 20px;
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        #fetchSensorBtn:hover {
+            transform: rotate(180deg);
+        }
+
+        #fetchSensorBtn.loading {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .sensor-container {
+            display: grid;
+            gap: 15px;
+        }
+
+        .sensor-box {
+            display: flex;
+            align-items: center;
+            background-color: var(--background-color);
+            border-radius: 10px;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .sensor-box:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transform: translateY(-3px);
+        }
+
+        .sensor-box i {
+            color: var(--primary-color);
+            margin-right: 15px;
+            font-size: 22px;
+            width: 30px;
+            text-align: center;
+        }
+
+        .input-box {
+            flex-grow: 1;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            color: var(--text-color);
+            outline: none;
+        }
+
+        .input-box::placeholder {
+            color: rgba(44, 62, 80, 0.5);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(46, 204, 113, 0.4);
+        }
+
+        .predict-box {
+            margin-top: 25px;
+            background-color: var(--background-color);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .predict-box h3 {
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .predict-box span {
+            font-weight: 700;
+            color: var(--accent-color);
+            font-size: 22px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Dark Mode Toggle -->
+        <div class="dark-mode-toggle">
+            <label class="toggle-switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="header">
+            <h2>
+                <i class="fas fa-seedling"></i>
+                AGRINOVA
+                <button id="fetchSensorBtn">
+                    <i class="fas fa-sync"></i>
+                </button>
+            </h2>
+        </div>
+        <div class="sensor-container">
+            <div class="sensor-box">
+                <i class="fas fa-tint"></i>
+                <input type="number" id="ph" class="input-box" placeholder="pH Value" min="0" max="14" step="0.1" required>
+            </div>
+            <div class="sensor-box">
+                <i class="fas fa-sun"></i>
+                <input type="number" id="sunlight" class="input-box" placeholder="Temperature (°C)" min="-50" max="60" step="0.1" required>
+            </div>
+            <div class="sensor-box">
+                <i class="fas fa-cloud-rain"></i>
+                <input type="number" id="water" class="input-box" placeholder="Rainfall (mm)" min="0" max="5000" step="0.1" required>
+            </div>
+            <div class="sensor-box">
+                <i class="fas fa-percent"></i>
+                <input type="number" id="humidity" class="input-box" placeholder="Humidity (%)" min="0" max="100" step="0.1" required>
+            </div>
+            <div class="sensor-box">
+                <i class="fas fa-droplet"></i>
+                <input type="number" id="moisture" class="input-box" placeholder="Soil Moisture (%)" min="0" max="100" step="0.1" required>
+            </div>
+        </div>
+        <button class="btn" onclick="predictCrop()">Predict Crop</button>
+        <div class="predict-box">
+            <h3>Predicted Crop</h3>
+            <span id="crop-name">-</span>
+            <p>Prediction Accuracy: <span id="accuracy">-</span>%</p>
+        </div>
+    </div>
+
+    <script>
+        // Dark Mode Toggle Functionality
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        // Check for saved dark mode preference
+        const savedDarkMode = localStorage.getItem('darkMode');
+        if (savedDarkMode === 'enabled') {
+            body.classList.add('dark-mode');
+            darkModeToggle.checked = true;
+        }
+
+        darkModeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                body.classList.add('dark-mode');
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('darkMode', null);
+            }
+        });
+
+        // Fetch Sensor Data Function
+        document.getElementById('fetchSensorBtn').addEventListener('click', function() {
+            // Show loading state
+            this.classList.add('loading');
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            fetch('http://127.0.0.1:5000/fetch_sensor_data')
+            .then(response => response.json())
+            .then(data => {
+                // Update input fields with fetched data
+                if (!data.error) {
+                    document.getElementById('sunlight').value = data.temperature.toFixed(1);
+                    document.getElementById('humidity').value = data.humidity.toFixed(1);
+                    document.getElementById('moisture').value = data.moisture.toFixed(1);
+                    
+                    // Optional: Show success notification
+                    alert('Sensor data fetched successfully!');
+                } else {
+                    alert('Error fetching sensor data: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to fetch sensor data');
+            })
+            .finally(() => {
+                // Restore button state
+                this.classList.remove('loading');
+                this.innerHTML = '<i class="fas fa-sync"></i>';
+            });
+        });
+
+        function predictCrop() {
+            let ph = document.getElementById('ph').value;
+            let temperature = document.getElementById('sunlight').value;
+            let rainfall = document.getElementById('water').value;
+            let humidity = document.getElementById('humidity').value;
+            let moisture = document.getElementById('moisture').value;
+
+            if (!ph || !temperature || !rainfall || !humidity || !moisture) {
+                alert("Please enter values for all fields!");
+                return;
+            }
+
+            let data = {
+                ph: parseFloat(ph),
+                temperature: parseFloat(temperature),
+                rainfall: parseFloat(rainfall),
+                humidity: parseFloat(humidity),
+                moisture: parseFloat(moisture)
+            };
+
+            fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Error: " + data.error);
+                } else {
+                    document.getElementById('crop-name').innerText = data.crop;
+                    document.getElementById('accuracy').innerText = data.accuracy;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
